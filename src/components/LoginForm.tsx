@@ -29,7 +29,6 @@ const LoginForm = () => {
   const handleSubmit = () => {
     try {
       const validatedData = loginSchema.parse(formData);
-      console.log(validatedData);
       setFormErrors({});
       // TODO: use that navigation when login succeed
       setUser({
