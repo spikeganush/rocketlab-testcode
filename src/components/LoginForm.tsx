@@ -3,6 +3,9 @@ import React, {useEffect, useState} from 'react';
 import Animated, {FadeInDown} from 'react-native-reanimated';
 import {z} from 'zod';
 import {Notifier, NotifierComponents} from 'react-native-notifier';
+import {useNavigation} from '@react-navigation/native';
+import {SCREENS} from '../utils/constant';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 
 const loginSchema = z.object({
   email: z.string().email(),
@@ -18,11 +21,15 @@ const LoginForm = () => {
   const [formData, setFormData] = useState({email: '', password: ''});
   const [formErrors, setFormErrors] = useState<FormErrors>({});
 
+  const navigation = useNavigation<NativeStackNavigationProp<any>>();
+
   const handleSubmit = () => {
     try {
       const validatedData = loginSchema.parse(formData);
       console.log(validatedData);
       setFormErrors({});
+      // TODO: use that navigation when login succeed
+      navigation.reset({index: 0, routes: [{name: SCREENS.DATA}]});
     } catch (error) {
       const zodError = error as z.ZodError;
       const newFormErrors: FormErrors = {};
