@@ -4,7 +4,7 @@ import Animated, {FadeInDown} from 'react-native-reanimated';
 import {z} from 'zod';
 import {Notifier, NotifierComponents} from 'react-native-notifier';
 import {useNavigation} from '@react-navigation/native';
-import {SCREENS} from '../utils/constant';
+import {SCREENS} from '@/src/utils/constant';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 
 const loginSchema = z.object({

@@ -2,12 +2,12 @@
 import React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import LoginScreen from '../screens/LoginScreen';
-import DataScreen from '../screens/DataScreen';
+import LoginScreen from '@/src/screens/LoginScreen';
+import DataScreen from '@/src/screens/DataScreen';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import {NotifierWrapper} from 'react-native-notifier';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
-import {SCREENS} from '../utils/constant';
+import {SCREENS} from '@/src/utils/constant';
 
 const Stack = createNativeStackNavigator();
 

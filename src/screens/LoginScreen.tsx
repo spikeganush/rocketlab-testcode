@@ -1,8 +1,8 @@
 import {View} from 'react-native';
 import React from 'react';
 import Animated, {FadeInUp} from 'react-native-reanimated';
-import Rocket from '../components/Rocket';
-import LoginForm from '../components/LoginForm';
+import Rocket from '@/src/components/Rocket';
+import LoginForm from '@/src/components/LoginForm';
 
 const LoginScreen = () => {
   return (
