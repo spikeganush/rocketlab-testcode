@@ -12,16 +12,16 @@ import Animated, {
 } from 'react-native-reanimated';
 
 const LoginScreen = () => {
-  const rocketTranslateY = useSharedValue(-500); // Initial position outside the screen
-  const rocketTranslateX = useSharedValue(-200); // Initial position outside the screen
+  const rocketTranslateY = useSharedValue(120); // Initial position outside the screen
+  const rocketTranslateX = useSharedValue(-280); // Initial position outside the screen
   const rocketScale = useSharedValue(0.1); // Initial small size
 
   useEffect(() => {
-    rocketTranslateY.value = withDelay(500, withSpring(-120)); // Move to final position
-    rocketTranslateX.value = withDelay(500, withSpring(-120)); // Move to final position
+    rocketTranslateY.value = withDelay(1000, withSpring(-120)); // Move to final position
+    rocketTranslateX.value = withDelay(1000, withSpring(120)); // Move to final position
     rocketScale.value = withDelay(
-      500,
-      withTiming(1, {duration: 2000, easing: Easing.inOut(Easing.ease)}),
+      1000,
+      withTiming(1, {duration: 1000, easing: Easing.inOut(Easing.ease)}),
     ); // Grow to full size
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -30,6 +30,7 @@ const LoginScreen = () => {
     return {
       transform: [
         {translateY: rocketTranslateY.value},
+        {translateX: rocketTranslateX.value},
         {scale: rocketScale.value},
       ],
     };
