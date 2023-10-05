@@ -1,9 +1,10 @@
 /* eslint-disable react-native/no-inline-styles */
-import {View} from 'react-native';
+import {View, Text, TouchableOpacity, TextInput} from 'react-native';
 import React, {useEffect} from 'react';
 import Animated, {
   Easing,
   FadeInUp,
+  FadeInDown,
   withSpring,
   withTiming,
   useSharedValue,
@@ -17,10 +18,10 @@ const LoginScreen = () => {
   const rocketScale = useSharedValue(0.1); // Initial small size
 
   useEffect(() => {
-    rocketTranslateY.value = withDelay(1000, withSpring(-120)); // Move to final position
-    rocketTranslateX.value = withDelay(1000, withSpring(120)); // Move to final position
+    rocketTranslateY.value = withDelay(600, withSpring(-100)); // Move to final position
+    rocketTranslateX.value = withDelay(600, withSpring(120)); // Move to final position
     rocketScale.value = withDelay(
-      1000,
+      600,
       withTiming(1, {duration: 1000, easing: Easing.inOut(Easing.ease)}),
     ); // Grow to full size
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -43,9 +44,9 @@ const LoginScreen = () => {
         className="h-full w-full absolute"
         source={require('../../assets/images/background.png')}
       />
-      <View className="h-full w-full flex pb-48 items-center justify-center">
+      <View className="h-1/2 w-full flex items-center justify-end pb-16 mb-10">
         <Animated.Text
-          entering={FadeInUp.duration(1000).delay(0.2).damping(0.5)}
+          entering={FadeInUp.duration(1000).delay(200).damping(0.5)}
           className="text-rocketLab-green font-bold text-4xl">
           RocketLab
         </Animated.Text>
@@ -55,10 +56,37 @@ const LoginScreen = () => {
           🚀
         </Animated.Text>
         <Animated.Text
-          entering={FadeInUp.duration(1000).delay(0.2).damping(0.5)}
+          entering={FadeInUp.duration(1000).delay(200).damping(0.5)}
           className="text-rocketLab-green font-bold text-4xl">
           Login
         </Animated.Text>
+      </View>
+
+      <View className="flex items-center mx-5 space-y-5">
+        <Animated.View
+          entering={FadeInDown.delay(200).duration(1000).springify()}
+          className="bg-black/5 p-5 rounded-2xl w-full">
+          <TextInput placeholder="Email" placeholderTextColor={'gray'} />
+        </Animated.View>
+        <Animated.View
+          entering={FadeInDown.delay(400).duration(1000).springify()}
+          className="bg-black/5 p-5 rounded-2xl w-full mb-3">
+          <TextInput
+            placeholder="Password"
+            placeholderTextColor={'gray'}
+            secureTextEntry
+          />
+        </Animated.View>
+
+        <Animated.View
+          className="w-full"
+          entering={FadeInDown.delay(600).duration(1000).springify()}>
+          <TouchableOpacity className="w-full bg-sky-400 p-3 rounded-2xl mb-3">
+            <Text className="text-xl font-bold text-white text-center">
+              Login
+            </Text>
+          </TouchableOpacity>
+        </Animated.View>
       </View>
     </View>
   );
