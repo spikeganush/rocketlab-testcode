@@ -7,7 +7,14 @@ module.exports = {
     './components/**/*.{js,ts,jsx,tsx}',
   ],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        rocketLab: {
+          blue: '#3e46b3',
+          green: '#14ffff',
+        },
+      },
+    },
   },
   plugins: [],
 };
