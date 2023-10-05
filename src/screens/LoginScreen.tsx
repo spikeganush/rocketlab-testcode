@@ -12,8 +12,8 @@ import Animated, {
   withDelay,
   ReduceMotion,
 } from 'react-native-reanimated';
-
 import {z} from 'zod';
+import {Notifier, NotifierComponents} from 'react-native-notifier';
 
 const loginSchema = z.object({
   email: z.string().email(),
@@ -90,6 +90,23 @@ const LoginScreen = () => {
       setFormErrors(newFormErrors);
     }
   };
+
+  useEffect(() => {
+    if (!formErrors.email && !formErrors.password) {
+      return;
+    }
+    const message = Object.values(formErrors)
+      .join('\n')
+      .replace('String', 'Password');
+    Notifier.showNotification({
+      title: 'Error',
+      description: message,
+      Component: NotifierComponents.Alert,
+      componentProps: {
+        alertType: 'error',
+      },
+    });
+  }, [formErrors]);
 
   return (
     <View className="bg-white h-full w-full">
