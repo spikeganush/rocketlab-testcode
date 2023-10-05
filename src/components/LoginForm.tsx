@@ -6,6 +6,7 @@ import {Notifier, NotifierComponents} from 'react-native-notifier';
 import {useNavigation} from '@react-navigation/native';
 import {SCREENS} from '@/src/utils/constant';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {useUserStore} from '../store/userStore';
 
 const loginSchema = z.object({
   email: z.string().email(),
@@ -20,6 +21,8 @@ type FormErrors = {
 const LoginForm = () => {
   const [formData, setFormData] = useState({email: '', password: ''});
   const [formErrors, setFormErrors] = useState<FormErrors>({});
+  const setUser = useUserStore(state => state.setUser);
+  const setIsLogged = useUserStore(state => state.setIsLogged);
 
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
 
@@ -29,6 +32,11 @@ const LoginForm = () => {
       console.log(validatedData);
       setFormErrors({});
       // TODO: use that navigation when login succeed
+      setUser({
+        email: validatedData.email,
+        name: 'John Doe',
+      });
+      setIsLogged(true);
       navigation.reset({index: 0, routes: [{name: SCREENS.DATA}]});
     } catch (error) {
       const zodError = error as z.ZodError;
@@ -58,6 +66,7 @@ const LoginForm = () => {
       },
     });
   }, [formErrors]);
+
   return (
     <View className="flex items-center mx-5 space-y-5">
       <Animated.View
