@@ -1,19 +1,9 @@
-/* eslint-disable react-native/no-inline-styles */
 import {View, Text, TouchableOpacity, TextInput} from 'react-native';
 import React, {useEffect, useState} from 'react';
-import Animated, {
-  Easing,
-  FadeInUp,
-  FadeInDown,
-  withSpring,
-  withTiming,
-  useSharedValue,
-  useAnimatedStyle,
-  withDelay,
-  ReduceMotion,
-} from 'react-native-reanimated';
+import Animated, {FadeInUp, FadeInDown} from 'react-native-reanimated';
 import {z} from 'zod';
 import {Notifier, NotifierComponents} from 'react-native-notifier';
+import Rocket from '../components/Rocket';
 
 const loginSchema = z.object({
   email: z.string().email(),
@@ -28,51 +18,6 @@ type FormErrors = {
 const LoginScreen = () => {
   const [formData, setFormData] = useState({email: '', password: ''});
   const [formErrors, setFormErrors] = useState<FormErrors>({});
-  const rocketTranslateY = useSharedValue(120); // Initial position outside the screen
-  const rocketTranslateX = useSharedValue(-280); // Initial position outside the screen
-  const rocketScale = useSharedValue(0.1); // Initial small size
-
-  useEffect(() => {
-    rocketTranslateY.value = withDelay(
-      600,
-      withSpring(-100, {
-        mass: 1,
-        damping: 10,
-        stiffness: 100,
-        overshootClamping: false,
-        restDisplacementThreshold: 0.01,
-        restSpeedThreshold: 2,
-        reduceMotion: ReduceMotion.System,
-      }),
-    ); // Move to final position
-    rocketTranslateX.value = withDelay(
-      600,
-      withSpring(120, {
-        mass: 1,
-        damping: 10,
-        stiffness: 100,
-        overshootClamping: false,
-        restDisplacementThreshold: 0.01,
-        restSpeedThreshold: 2,
-        reduceMotion: ReduceMotion.System,
-      }),
-    ); // Move to final position
-    rocketScale.value = withDelay(
-      600,
-      withTiming(1, {duration: 600, easing: Easing.inOut(Easing.ease)}),
-    ); // Grow to full size
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const rocketAnimatedStyle = useAnimatedStyle(() => {
-    return {
-      transform: [
-        {translateY: rocketTranslateY.value},
-        {translateX: rocketTranslateX.value},
-        {scale: rocketScale.value},
-      ],
-    };
-  });
 
   const handleSubmit = () => {
     try {
@@ -121,11 +66,7 @@ const LoginScreen = () => {
           className="text-rocketLab-green font-bold text-4xl">
           RocketLab
         </Animated.Text>
-        <Animated.Text
-          className="absolute"
-          style={[{fontSize: 50}, rocketAnimatedStyle]}>
-          🚀
-        </Animated.Text>
+        <Rocket />
         <Animated.Text
           entering={FadeInUp.duration(1000).delay(200).damping(0.5)}
           className="text-rocketLab-green font-bold text-4xl">
@@ -162,9 +103,9 @@ const LoginScreen = () => {
           className="w-full"
           entering={FadeInDown.delay(600).duration(1000).springify()}>
           <TouchableOpacity
-            className="w-full bg-sky-400 p-3 rounded-2xl mb-3"
+            className="w-full bg-rocketLab-blue p-3 rounded-2xl mb-3"
             onPress={handleSubmit}>
-            <Text className="text-xl font-bold text-white text-center">
+            <Text className="text-xl font-bold text-rocketLab-green text-center">
               Login
             </Text>
           </TouchableOpacity>
