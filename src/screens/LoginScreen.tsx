@@ -10,6 +10,7 @@ import Animated, {
   useSharedValue,
   useAnimatedStyle,
   withDelay,
+  ReduceMotion,
 } from 'react-native-reanimated';
 
 const LoginScreen = () => {
@@ -18,11 +19,33 @@ const LoginScreen = () => {
   const rocketScale = useSharedValue(0.1); // Initial small size
 
   useEffect(() => {
-    rocketTranslateY.value = withDelay(600, withSpring(-100)); // Move to final position
-    rocketTranslateX.value = withDelay(600, withSpring(120)); // Move to final position
+    rocketTranslateY.value = withDelay(
+      600,
+      withSpring(-100, {
+        mass: 1,
+        damping: 10,
+        stiffness: 100,
+        overshootClamping: false,
+        restDisplacementThreshold: 0.01,
+        restSpeedThreshold: 2,
+        reduceMotion: ReduceMotion.System,
+      }),
+    ); // Move to final position
+    rocketTranslateX.value = withDelay(
+      600,
+      withSpring(120, {
+        mass: 1,
+        damping: 10,
+        stiffness: 100,
+        overshootClamping: false,
+        restDisplacementThreshold: 0.01,
+        restSpeedThreshold: 2,
+        reduceMotion: ReduceMotion.System,
+      }),
+    ); // Move to final position
     rocketScale.value = withDelay(
       600,
-      withTiming(1, {duration: 1000, easing: Easing.inOut(Easing.ease)}),
+      withTiming(1, {duration: 600, easing: Easing.inOut(Easing.ease)}),
     ); // Grow to full size
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
