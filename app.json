@@ -1,4 +1,7 @@
 {
   "name": "rocketlab",
-  "displayName": "rocketlab"
+  "displayName": "rocketlab",
+  "experiments": {
+    "tsConfigPaths": true
+  }
 }
