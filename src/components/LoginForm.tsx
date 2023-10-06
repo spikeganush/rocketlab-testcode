@@ -7,6 +7,7 @@ import {useNavigation} from '@react-navigation/native';
 import {SCREENS} from '@/src/utils/constant';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {useUserStore} from '../store/userStore';
+import ky from 'ky';
 
 const loginSchema = z.object({
   email: z.string().email(),
@@ -18,6 +19,14 @@ type FormErrors = {
   password?: string;
 };
 
+type ResultLogin = {
+  authLogin: {
+    firstname: string;
+    refreshToken: string;
+    token: string;
+  };
+};
+
 const LoginForm = () => {
   const [formData, setFormData] = useState({email: '', password: ''});
   const [formErrors, setFormErrors] = useState<FormErrors>({});
@@ -26,17 +35,49 @@ const LoginForm = () => {
 
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     try {
       const validatedData = loginSchema.parse(formData);
+
+      const payload = {
+        authLogin: {
+          email: formData.email,
+          pass: formData.password,
+        },
+      };
+
+      const result: ResultLogin = await ky
+        .post('https://testvm1.rokt.io/api/jsonql', {
+          headers: {
+            'Content-Type': 'application/json',
+            'x-api-key': 'c37861c7-7414-4a40-bbd8-3343662e4483',
+          },
+          json: payload,
+        })
+        .json();
+
+      console.log(result);
+
       setFormErrors({});
-      // TODO: use that navigation when login succeed
-      setUser({
-        email: validatedData.email,
-        name: 'John Doe',
-      });
-      setIsLogged(true);
-      navigation.reset({index: 0, routes: [{name: SCREENS.DATA}]});
+
+      if (result?.authLogin?.token) {
+        setUser({
+          name: result?.authLogin?.firstname,
+          email: validatedData.email,
+        });
+
+        setIsLogged(true);
+        navigation.reset({index: 0, routes: [{name: SCREENS.DATA}]});
+      } else {
+        Notifier.showNotification({
+          title: 'Error',
+          description: 'Invalid email or password',
+          Component: NotifierComponents.Alert,
+          componentProps: {
+            alertType: 'error',
+          },
+        });
+      }
     } catch (error) {
       const zodError = error as z.ZodError;
       const newFormErrors: FormErrors = {};
