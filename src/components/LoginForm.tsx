@@ -1,12 +1,12 @@
-import {View, Text, TouchableOpacity, TextInput} from 'react-native';
+import {View, Text, TouchableOpacity, TextInput, Image} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import Animated, {FadeInDown} from 'react-native-reanimated';
 import {z} from 'zod';
 import {Notifier, NotifierComponents} from 'react-native-notifier';
 import {useNavigation} from '@react-navigation/native';
-import {SCREENS} from '@/src/utils/constant';
+import {API_KEY, SCREENS} from '@/src/utils/constant';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {useUserStore} from '../store/userStore';
+import {useUserStore} from '@/src/store/userStore';
 import ky from 'ky';
 
 const loginSchema = z.object({
@@ -27,13 +27,31 @@ type ResultLogin = {
   };
 };
 
+type ErrorLogin = {
+  authLogin: string;
+};
+
 const LoginForm = () => {
   const [formData, setFormData] = useState({email: '', password: ''});
   const [formErrors, setFormErrors] = useState<FormErrors>({});
+  const [seePassword, setSeePassword] = useState(false);
   const setUser = useUserStore(state => state.setUser);
   const setIsLogged = useUserStore(state => state.setIsLogged);
 
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
+
+  const toggleSeePassword = () => {
+    setSeePassword(prev => !prev);
+  };
+
+  const isResultLogin = (
+    result: ErrorLogin | ResultLogin,
+  ): result is ResultLogin => {
+    return (
+      (result as ResultLogin).authLogin !== undefined &&
+      (result as ResultLogin).authLogin.token !== undefined
+    );
+  };
 
   const handleSubmit = async () => {
     try {
@@ -46,11 +64,11 @@ const LoginForm = () => {
         },
       };
 
-      const result: ResultLogin = await ky
+      const result: ErrorLogin | ResultLogin = await ky
         .post('https://testvm1.rokt.io/api/jsonql', {
           headers: {
             'Content-Type': 'application/json',
-            'x-api-key': 'c37861c7-7414-4a40-bbd8-3343662e4483',
+            'x-api-key': API_KEY,
           },
           json: payload,
         })
@@ -59,16 +77,7 @@ const LoginForm = () => {
       console.log(result);
 
       setFormErrors({});
-
-      if (result?.authLogin?.token) {
-        setUser({
-          name: result?.authLogin?.firstname,
-          email: validatedData.email,
-        });
-
-        setIsLogged(true);
-        navigation.reset({index: 0, routes: [{name: SCREENS.DATA}]});
-      } else {
+      if (result?.authLogin === 'invalid credentials') {
         Notifier.showNotification({
           title: 'Error',
           description: 'Invalid email or password',
@@ -77,6 +86,16 @@ const LoginForm = () => {
             alertType: 'error',
           },
         });
+      }
+
+      if (isResultLogin(result)) {
+        setUser({
+          name: result.authLogin.firstname,
+          email: validatedData.email,
+        });
+
+        setIsLogged(true);
+        navigation.reset({index: 0, routes: [{name: SCREENS.DATA}]});
       }
     } catch (error) {
       const zodError = error as z.ZodError;
@@ -122,15 +141,32 @@ const LoginForm = () => {
       </Animated.View>
       <Animated.View
         entering={FadeInDown.delay(400).duration(1000).springify()}
-        className="bg-black/5 p-5 rounded-2xl w-full mb-3">
+        className="bg-black/5 p-5 rounded-2xl w-full mb-3 relative z-0">
         <TextInput
           className="text-xl"
           placeholder="Password"
           placeholderTextColor={'gray'}
           value={formData.password}
           onChangeText={text => setFormData({...formData, password: text})}
-          secureTextEntry
+          secureTextEntry={!seePassword}
         />
+        <View className="absolute right-0 top-1/2 z-10">
+          {seePassword ? (
+            <TouchableOpacity onPress={toggleSeePassword}>
+              <Image
+                source={require('@/assets/images/eye-outline.png')}
+                className="w-[50px] h-[50px] mr-3"
+              />
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity onPress={toggleSeePassword}>
+              <Image
+                source={require('@/assets/images/eye-off-outline.png')}
+                className="w-[50px] h-[50px] mr-3"
+              />
+            </TouchableOpacity>
+          )}
+        </View>
       </Animated.View>
 
       <Animated.View
